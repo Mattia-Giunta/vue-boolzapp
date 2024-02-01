@@ -12,23 +12,238 @@
 
     <link rel="stylesheet" href="./assets/css/style.css">
 
-    <title>Document</title>
+    <title>Boolzapp</title>
 
 </head>
-<body>
-    
-    <div id="app">
 
+<body class="py-5">
 
+    <div id="app" class="container">
 
+        <div class="row h-100">
+
+            <!-- contenitore colonna sinistra -->
+            <div
+                id="col-left"
+                class="h-100 col-5 border px-0 d-flex flex-column">
+
+                <div id="col-left-top" class="p-2 d-flex align-items-center justify-content-between">
+
+                    <!-- immagine profilo -->
+                    <div class="d-flex align-items-center">
+                        <figure>
+
+                            <img 
+                            src="./assets/img/avatar_io.jpg" 
+                            class="rounded-circle" 
+                            width="65" 
+                            alt="avatar personale">
+
+                        </figure>
+                        <span>Sofia</span>
+                    </div>
+
+                    <!-- icone elementi a fianco all' immagine del profilo -->
+                    <div class="d-flex gap-3">
+                        <i class="fas fa-circle-notch "></i>
+                        <i class="fas fa-comment-alt"></i>
+                        <i class="fas fa-ellipsis-v"></i>
+                    </div>
+
+                </div>
+
+                <!-- banner per attivare le notifiche -->
+                <div id="col-left-notifiche" class="p-2 d-flex align-items-center gap-3">
+
+                    <div id="bell" class="rounded-circle bg-light">
+                        <i class="fa fa-bell-slash" aria-hidden="true"></i>
+                    </div>
+
+                    <div>
+                        <h3 class="fs-6">Ricevi notifiche di nuovi messaggi</h3>
+                        <a href="">Attiva notifiche desktop</a>
+                    </div>
+
+                </div>
+
+                <!--contenitore area input per cercare utenti nella lista -->
+                <div id="col-left-search" class="p-2 ">
+
+                    <div class="input-group">
+
+                        <span class="input-group-text" id="basic-addon1">
+                            <i class="fa fa-search" aria-hidden="true"></i>
+                        </span>
+
+                        <!-- text area con abbinato funzione searchContact -->
+                        <input 
+                        type="text" 
+                        class="form-control" 
+                        placeholder="Cerca nella chat..." 
+                        aria-label="Username" 
+                        aria-describedby="basic-addon1"
+                        v-model="searchText"
+                        @keyUp="searchContact">
+                        
+                    </div>
+
+                </div>
+
+                <!-- contenitore lista di utenti con cui ti sei scritto -->
+                <div id="col-left-chats"
+                    class="h-100 d-flex flex-grow-1 bg-light  overflow-y-auto">
+
+                    <div class="w-100">
+                        
+                        <!-- contenitore ciclato per inserire le singole chat in lista -->
+                        <div
+                            v-for="(element, index) in contacts"
+                            @click="changeChat(index)"
+                            class="p-2 border"
+                            :class="element.visible ? 'd-flex align-items-center justify-content-between gap-2' : '' "
+                            v-show="element.visible">
+
+                            <div class="d-flex align-items-center">
+
+                                <figure>
+
+                                    <img
+                                    :src=" `${element.avatar}` "
+                                    alt=""
+                                    class="rounded-circle"
+                                    width="65">
+
+                                </figure>
+
+                                <div>
+
+                                    <span>
+                                        {{ element.name }}
+                                    </span>
+
+                                    <p class="ultimo-messaggio">
+                                        {{ element.messages[element.messages.length - 1].message }}
+                                    </p>
+
+                                </div>
+                            </div>
+
+                            <div>
+
+                                <span class="ultimo-messaggio">
+                                    {{ element.messages[element.messages.length - 1].date }}
+                                </span>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- contentore colonna di destra -->
+            <div
+                id="col-right"
+                class="h-100 col-7 border px-0 d-flex flex-column">
+
+                <!-- riusato elemento per la parte sopra della chat di destra -->
+                <div id="col-left-top" class="p-2 d-flex align-items-center justify-content-between">
+
+                    <!-- immagine del profilo e nome della persona con cui ti stai scrivendo -->
+                    <div class="d-flex align-items-center gap-3">
+
+                        <figure>
+
+                            <img 
+                            :src=" `${contacts[ activeChat ].avatar}` " 
+                            class="rounded-circle" width="65" 
+                            alt="avatar personale"
+                            >
+
+                        </figure>
+
+                        <div>
+                            <span>{{contacts [ activeChat ].name}}</span>
+                            <p class="ultimo-accesso">Ultimo accesso oggi alle 12:00</p>
+                        </div>
+
+                    </div>
+
+                    <div class="d-flex gap-3">
+                        <i class="fas fa-search"></i>
+                        <i class="fas fa-paperclip"></i>
+                        <i class="fas fa-ellipsis-v"></i>
+                    </div>
+
+                </div>
+
+                <!-- area della chat  -->
+                <div
+                id="col-right-chat"
+                class="h-100 flex-grow-1 overflow-y-auto  p-3">
+
+                    <!-- messaggio ciclato e differenziato tra sent e received tramite una condizione -->
+                    <div
+                    v-for="(element, index) in contacts[ activeChat ].messages"
+                    class=" sent p-3 rounded position-relative mb-4"
+                    :class="(element.status === 'sent') ? 'sent ms-auto' : 'received bg-light'">
+                            
+                        <p class="m-0">
+                            {{element.message}}
+                        </p>
+                        <span>
+                            {{element.date}}
+                        </span>
+                            
+                    </div>
+                    
+                        <!-- messaggio ricevuto -->
+                    <!-- <div class="received bg-light p-3 rounded position-relative">
+                        <p class="m-0">
+                            hai portato a spasso il cane
+                        </p>
+                        <span>
+                            15:00
+                        </span>
+                    </div> -->
+                    
+                </div>
+
+                <!-- contenitore area di testo per scrivere il messaggio -->
+                <div id="col-right-new-message" class="d-flex align-items-center p-2 gap-3">
+
+                    <i class="far fa-smile px-3"></i>
+
+                    <div class="w-100">
+
+                        <input
+                            @keyup.enter="newMessage"
+                            v-model="newText"
+                            type="text"
+                            class="form-control"
+                            name="newMessage"
+                            id="newMessage"
+                            placeholder="Nuovo messaggio.."
+                        />
+
+                    </div>
+
+                    <i class="fa fa-microphone px-3" aria-hidden="true"></i>
+
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- link bootstraps -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.min.js'
+        integrity='sha512-WW8/jxkELe2CAiE4LvQfwm1rajOS8PHasCCx+knHG0gBHt8EXxS6T6tJRTGuDQVnluuAvMxWF4j8SNFDKceLFg=='
+        crossorigin='anonymous'>
+    </script>
 
-    <!-- link vue.js -->
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src='https://unpkg.com/vue@3/dist/vue.global.js'></script>
 
     <script src="./assets/main.js/main.js"></script>
 </body>
 </html>
+
+<!-- Terminato esercizio -->

@@ -40,11 +40,17 @@ const { createApp } = Vue
   createApp({
     data() {
       return {
+
+        user: {
+            name: 'Nome Utente',
+            avatar: '_io'
+        },    
+        
         contacts: [
 
             {
             name: 'Michele',
-            avatar: './img/avatar_1.png',
+            avatar: './assets/img/avatar_1.jpg',
             visible: true,
             messages: [
                 {
@@ -67,7 +73,7 @@ const { createApp } = Vue
             
             {
             name: 'Fabio',
-            avatar: './img/avatar_2.png',
+            avatar: './assets/img/avatar_2.jpg',
             visible: true,
             messages: [
                 {
@@ -90,7 +96,7 @@ const { createApp } = Vue
 
             {
             name: 'Samuele',
-            avatar: './img/avatar_3.png',
+            avatar: './assets/img/avatar_3.jpg',
             visible: true,
             messages: [
                 {
@@ -113,7 +119,7 @@ const { createApp } = Vue
 
             {
             name: 'Alessandro B.',
-            avatar: './img/avatar_4.png',
+            avatar: './assets/img/avatar_4.jpg',
             visible: true,
             messages: [
                 {
@@ -131,7 +137,7 @@ const { createApp } = Vue
 
             {
             name: 'Alessandro L.',
-            avatar: './img/avatar_5.png',
+            avatar: './assets/img/avatar_5.jpg',
             visible: true,
             messages: [
                 {
@@ -149,7 +155,7 @@ const { createApp } = Vue
 
             {
             name: 'Claudia',
-            avatar: './img/avatar_6.png',
+            avatar: './assets/img/avatar_6.jpg',
             visible: true,
             messages: [
                 {
@@ -172,7 +178,7 @@ const { createApp } = Vue
 
             {
             name: 'Federico',
-            avatar: './img/avatar_7.png',
+            avatar: './assets/img/avatar_7.jpg',
             visible: true,
             messages: [
                 {
@@ -190,7 +196,7 @@ const { createApp } = Vue
 
             {
             name: 'Davide',
-            avatar: './img/avatar_8.png',
+            avatar: './assets/img/avatar_8.jpg',
             visible: true,
             messages: [
                 {
@@ -210,13 +216,81 @@ const { createApp } = Vue
                 }
             ],
             }
-        ]
+        ],
+        activeChat: 0,
+        newText: '',
+        searchText:''
       }
     },
     created(){
 
     },
+    mounted() {
+        // console.log('Hello');
+    },
     methods: {
+        // funzione per abbinare la chat area alla persona che scegli nella lista
+        changeChat(index){
+            this.activeChat = index
+        },
+        // funzione per generare la data attuale 
+        generaData(){
+
+            let data = new Date()
+            let anno = data.getFullYear()
+            let mese = data.getMonth() + 1
+            let giorno = data.getDate()
+
+            let ore = data.getHours()
+            let minuti = data.getMinutes()
+            let secondi = data.getSeconds()
+
+            const formatteDateTime = `${giorno}/${mese}/${anno} ${ore}:${minuti}:${secondi}`;
+            return formatteDateTime
+        },
+        // funzione per inserire quello che scivi nella input nella chat
+        newMessage(){
+
+            
+            this.contacts[ this.activeChat ].messages.push(
+                {
+                    date: this.generaData(),
+                    message: this.newText,
+                    status: 'sent'
+                }  
+            )
+
+            this.newText = ''
+                // temporizzato la risposta automatica statica
+            setTimeout(() =>{
+                this.contacts[ this.activeChat ].messages.push(
+                    {
+                        date: this.generaData(),
+                        message: 'ok',
+                        status: 'received'
+                    }
+    
+                )
+            }, 2000 )
+        },
+        // funzione per cercare nella lista dei contatti 
+        searchContact(){
+            this.contacts.forEach((element) => {
+
+                if(element.name.toLowerCase().includes(this.searchText.toLowerCase() ) ){
+
+                    element.visible = true
+
+                } else {
+
+                    element.visible = false
+
+                }
+                
+            })
+        }
         
     }
   }).mount('#app')
+
+//   Terminato esercizio
